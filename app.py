@@ -1,12 +1,12 @@
 import sys
 import os
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file
 
 # Adicionar o diretório principal ao sys.path para garantir que os módulos possam ser importados corretamente
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from urna import votar as votar_urna
-from desencriptografia_votos import desencriptografar_votos
+from desencriptografia_votos import desencriptografar_votos, descriptografia
 from autocompletar import times_populares
 from cores_times import cores_times
 
@@ -27,11 +27,8 @@ def get_user_ip():
 def index():
     votou = session.get('usuario_votou', False)
     mensagem = session.get('mensagem', '')
-    caminho_relatorio = os.path.join(os.path.dirname(__file__), 'relatorio_votacao.txt')
-    if os.path.exists(caminho_relatorio):
-        votos_contados, total_votos, ranking = desencriptografar_votos()
-        return render_template('resultados.html', votos_contados=votos_contados, total_votos=total_votos, ranking=ranking)
-    return render_template('index.html', times=times_populares, votou=votou, mensagem=mensagem)
+    votos_contados, total_votos, ranking = desencriptografar_votos()
+    return render_template('index.html', times=times_populares, votou=votou, mensagem=mensagem, total_votos=total_votos, ranking=ranking)
 
 @app.route('/votar', methods=['POST'])
 def votar_route():
@@ -64,7 +61,7 @@ def nao_tenho_time_route():
     mensagem = votar_urna("Sem time", user_ip)
     
     session['usuario_votou'] = True
-    session['mensagem'] = f"Voto registrado: {mensagem}. Obrigado por participar!"
+    session['mensagem'] = "Voto registrado: Sem time. Obrigado por participar!"
     
     return redirect(url_for('agradecimento'))
 
@@ -85,6 +82,14 @@ def get_cores_time():
 def agradecimento():
     mensagem = session.get('mensagem', 'Obrigado por votar! Agradecemos sua participação.')
     return render_template('agradecimento.html', mensagem=mensagem)
+
+@app.route('/ver_votos')
+def ver_votos():
+    caminho_arquivo = os.path.join(os.path.dirname(__file__), 'criptografia_votos.txt')
+    if os.path.exists(caminho_arquivo):
+        return send_file(caminho_arquivo, as_attachment=True)
+    else:
+        return "Arquivo de votos não encontrado.", 404
 
 if __name__ == '__main__':
     app.run(debug=True)

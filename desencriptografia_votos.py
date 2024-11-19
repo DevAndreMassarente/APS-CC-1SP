@@ -1,8 +1,4 @@
-from criptografia_votos import hash, chave
-
-def descriptografia(voto_criptografado, chave=chave):
-    voto = [chr((int(voto_criptografado[i:i+2], 16) - chave) % 256) for i in range(0, len(voto_criptografado), 2)]
-    return ''.join(voto)
+from criptografia_votos import descriptografia, chave
 
 def desencriptografar_votos():
     votos_contados = {}
@@ -14,7 +10,7 @@ def desencriptografar_votos():
         return votos_contados, 0, []
 
     for voto_criptografado in votos_criptografados:
-        voto = descriptografia(voto_criptografado.strip())
+        voto = descriptografia(voto_criptografado.strip(), chave)
         if voto in votos_contados:
             votos_contados[voto] += 1
         else:
