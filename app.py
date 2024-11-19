@@ -17,13 +17,6 @@ static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.secret_key = os.urandom(24)
 
-def reset_votacao():
-    for arquivo in ['criptografia_votos.txt', 'relatorio_votacao.txt']:
-        caminho_arquivo = os.path.join(os.path.dirname(__file__), arquivo)
-        if os.path.exists(caminho_arquivo):
-            os.remove(caminho_arquivo)
-    session.clear()
-
 def get_user_ip():
     if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
         return request.environ['REMOTE_ADDR']
@@ -74,16 +67,6 @@ def nao_tenho_time_route():
     session['mensagem'] = f"Voto registrado: {mensagem}. Obrigado por participar!"
     
     return redirect(url_for('agradecimento'))
-
-@app.route('/reset_votacao', methods=['POST'])
-def reset_votacao_route():
-    senha = request.form['senha']
-    
-    if senha == 'reset123':
-        reset_votacao()
-        return jsonify({"status": "Sucesso", "mensagem": "Votação resetada com sucesso!"})
-    
-    return jsonify({"status": "Erro", "mensagem": "Senha incorreta!"})
 
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
