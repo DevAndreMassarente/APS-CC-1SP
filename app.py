@@ -1,7 +1,6 @@
 import sys
 import os
-import sqlite3
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file
 
 # Adicionar o diretório principal ao sys.path para garantir que os módulos possam ser importados corretamente
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -18,25 +17,6 @@ static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.secret_key = os.urandom(24)
 
-# Configurar o banco de dados SQLite
-DATABASE = 'votos.db'
-
-def get_db():
-    conn = sqlite3.connect(DATABASE)
-    return conn
-
-def init_db():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS votos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            voto TEXT NOT NULL,
-            user_ip TEXT NOT NULL
-        )
-    ''')
-    db.commit()
-
 def get_user_ip():
     if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
         return request.environ['REMOTE_ADDR']
@@ -45,7 +25,6 @@ def get_user_ip():
 
 @app.route('/')
 def index():
-    init_db()  # Inicializar o banco de dados na primeira requisição
     votou = session.get('usuario_votou', False)
     mensagem = session.get('mensagem', '')
     votos_contados, total_votos, ranking = desencriptografar_votos()
@@ -106,12 +85,11 @@ def agradecimento():
 
 @app.route('/ver_votos')
 def ver_votos():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT voto FROM votos')
-    votos_criptografados = cursor.fetchall()
-    votos_desencriptados = [descriptografia(voto[0], chave) for voto in votos_criptografados]
-    return render_template('ver_votos.html', votos=votos_desencriptados)
+    caminho_arquivo = os.path.join(os.path.dirname(__file__), 'criptografia_votos.txt')
+    if os.path.exists(caminho_arquivo):
+        return send_file(caminho_arquivo, as_attachment=True)
+    else:
+        return "Arquivo de votos não encontrado.", 404
 
 if __name__ == '__main__':
     app.run(debug=True)
