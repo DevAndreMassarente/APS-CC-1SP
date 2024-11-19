@@ -1,7 +1,6 @@
 [build]
 publish = "static"
-command = "gunicorn app:app"
-
+command = "gunicorn app:app --daemon"
 [build.environment]
 PYTHON_VERSION = "3.8"
 
