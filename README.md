@@ -47,7 +47,7 @@ Projeto de urna eletrônica com hash, criptografia e desencriptação sem biblio
     ```
 
 ## Deploy no Netlify
-Para fazer o deploy no Netlify, você pode seguir os passos descritos abaixo.
+Para fazer o deploy no Netlify, você pode seguir os passos descritos acima.
 
 ## Contribuição
 Sinta-se à vontade para contribuir com o projeto. Faça um fork do repositório, crie uma branch para suas alterações e envie um pull request.
