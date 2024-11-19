@@ -3,23 +3,23 @@ import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 
 # Adicionar o diretório principal ao sys.path para garantir que os módulos possam ser importados corretamente
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from urna import votar as votar_urna
 from desencriptografia_votos import desencriptografar_votos
-from extras.autocompletar import times_populares
-from extras.cores_times import cores_times
+from autocompletar import times_populares
+from cores_times import cores_times
 
 # Configurar os caminhos para templates e arquivos estáticos
-template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
-static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
+template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
+static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.secret_key = os.urandom(24)
 
 def reset_votacao():
     for arquivo in ['criptografia_votos.txt', 'relatorio_votacao.txt']:
-        caminho_arquivo = os.path.join(os.path.dirname(__file__), '..', arquivo)
+        caminho_arquivo = os.path.join(os.path.dirname(__file__), arquivo)
         if os.path.exists(caminho_arquivo):
             os.remove(caminho_arquivo)
     session.clear()
@@ -34,7 +34,7 @@ def get_user_ip():
 def index():
     votou = session.get('usuario_votou', False)
     mensagem = session.get('mensagem', '')
-    caminho_relatorio = os.path.join(os.path.dirname(__file__), '..', 'relatorio_votacao.txt')
+    caminho_relatorio = os.path.join(os.path.dirname(__file__), 'relatorio_votacao.txt')
     if os.path.exists(caminho_relatorio):
         votos_contados, total_votos, ranking = desencriptografar_votos()
         return render_template('resultados.html', votos_contados=votos_contados, total_votos=total_votos, ranking=ranking)
@@ -102,14 +102,6 @@ def get_cores_time():
 def agradecimento():
     mensagem = session.get('mensagem', 'Obrigado por votar! Agradecemos sua participação.')
     return render_template('agradecimento.html', mensagem=mensagem)
-
-@app.route('/resultados')
-def resultados():
-    caminho_relatorio = os.path.join(os.path.dirname(__file__), '..', 'relatorio_votacao.txt')
-    if os.path.exists(caminho_relatorio):
-        votos_contados, total_votos, ranking = desencriptografar_votos()
-        return render_template('resultados.html', votos_contados=votos_contados, total_votos=total_votos, ranking=ranking)
-    return render_template('index.html', times=times_populares, votou=False, mensagem="Nenhum resultado disponível no momento.")
 
 if __name__ == '__main__':
     app.run(debug=True)
