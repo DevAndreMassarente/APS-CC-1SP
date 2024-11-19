@@ -103,5 +103,13 @@ def agradecimento():
     mensagem = session.get('mensagem', 'Obrigado por votar! Agradecemos sua participação.')
     return render_template('agradecimento.html', mensagem=mensagem)
 
+@app.route('/resultados')
+def resultados():
+    caminho_relatorio = os.path.join(os.path.dirname(__file__), '..', 'relatorio_votacao.txt')
+    if os.path.exists(caminho_relatorio):
+        votos_contados, total_votos, ranking = desencriptografar_votos()
+        return render_template('resultados.html', votos_contados=votos_contados, total_votos=total_votos, ranking=ranking)
+    return render_template('index.html', times=times_populares, votou=False, mensagem="Nenhum resultado disponível no momento.")
+
 if __name__ == '__main__':
     app.run(debug=True)
