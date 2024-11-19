@@ -1,0 +1,256 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+    --cor-primaria: #2c3e50;
+    --cor-secundaria: #34495e;
+    --cor-terciaria: #7f8c8d;
+    --cor-fundo: rgba(236, 240, 241, 0.9);
+    --cor-texto: #2c3e50;
+    --cor-borda: rgba(44, 62, 80, 0.3);
+    --cor-destaque: #3498db;
+    --cor-esquerda: transparent;
+    --cor-direita: transparent;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-image: url('../static/fundo/fundochampions.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--cor-texto);
+    position: relative;
+}
+
+body::before,
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    transition: background-color 0.3s ease;
+}
+
+body::before {
+    left: 0;
+    background-color: var(--cor-esquerda);
+}
+
+body::after {
+    right: 0;
+    background-color: var(--cor-direita);
+}
+
+.container {
+    background-color: var(--cor-fundo);
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--cor-borda);
+    max-width: 90%;
+    width: 400px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    color: var(--cor-primaria);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.logo-container {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 20px; /* Ajuste o espaçamento inferior conforme necessário */
+    background: #fff;
+    border-radius: 50%;
+    padding: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.logo-container:hover {
+    transform: scale(1.05);
+}
+
+.logo-clube {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.logo-clube:hover {
+    transform: scale(1.1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--cor-secundaria);
+}
+
+input[type="text"] {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    background-color: #fff;
+    color: var(--cor-texto);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--cor-destaque);
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+.sugestoes {
+    list-style-type: none;
+    padding-left: 0;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    background-color: #fff;
+    position: relative;
+    z-index: 1000;
+}
+
+.sugestoes li {
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sugestoes li:hover {
+    background-color: var(--cor-fundo);
+}
+
+.botoes {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn-primario, .btn-secundario {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primario {
+    background-color: #4CAF50; /* Verde */
+    color: #fff;
+}
+
+.btn-secundario {
+    background-color: #FF9800; /* Laranja */
+    color: #fff;
+}
+
+.btn-primario:hover, .btn-secundario:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primario:active, .btn-secundario:active {
+    transform: translateY(1px);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--cor-fundo);
+    margin: 15% auto;
+    padding: 2rem;
+    border: 1px solid var(--cor-borda);
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content p {
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    input[type="text"], .sugestoes {
+        max-width: 100%;
+    }
+
+    .logo-container {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+@keyframes pulsar {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.pulsar {
+    animation: pulsar 0.5s ease-in-out;
+}
