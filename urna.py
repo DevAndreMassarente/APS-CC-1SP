@@ -1,5 +1,4 @@
 from criptografia_votos import criptografia, chave
-from extras.bot import ativar_bot, desativar_bot
 
 usuario_votou = {}
 
@@ -18,14 +17,8 @@ def votar(voto, user_ip):
 
 if __name__ == '__main__':
     while True:
-        voto = input("Insira o nome do seu time ou digite um comando (ativarbot, desativarbot, sair): ").strip().lower()
-        if voto == "ativarbot":
-            ativar_bot()
-            print("Bot ativado.")
-        elif voto == "desativarbot":
-            desativar_bot()
-            print("Bot desativado.")
-        elif voto == "sair":
+        voto = input("Insira o nome do seu time ou digite 'sair' para encerrar: ").strip().lower()
+        if voto == "sair":
             print("Encerrando o programa.")
             break
         else:

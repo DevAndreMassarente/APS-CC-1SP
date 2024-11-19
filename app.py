@@ -7,8 +7,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from urna import votar as votar_urna
 from desencriptografia_votos import desencriptografar_votos
-from autocompletar import times_populares
-from cores_times import cores_times
+from extras.autocompletar import times_populares
+from extras.cores_times import cores_times
 
 # Configurar os caminhos para templates e arquivos estáticos
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
