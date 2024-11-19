@@ -1,18 +1,15 @@
+import sqlite3
 from criptografia_votos import criptografia, chave
 
-usuario_votou = {}
-
 def votar(voto, user_ip):
-    global usuario_votou
-    if user_ip in usuario_votou:
-        return "Você já votou!"
-    
     votos_criptografados = criptografia(voto, chave)
     
-    with open('criptografia_votos.txt', 'a', encoding='utf-8') as armazenamento_votos:
-        armazenamento_votos.write(votos_criptografados + '\n')
+    conn = sqlite3.connect('votos.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO votos (voto, user_ip) VALUES (?, ?)', (votos_criptografados, user_ip))
+    conn.commit()
+    conn.close()
     
-    usuario_votou[user_ip] = True
     return f"Voto registrado: {voto}"
 
 if __name__ == '__main__':

@@ -1,38 +1,25 @@
-from criptografia_votos import hash, chave
-
-def descriptografia(voto_criptografado, chave=chave):
-    voto = [chr((int(voto_criptografado[i:i+2], 16) - chave) % 256) for i in range(0, len(voto_criptografado), 2)]
-    return ''.join(voto)
+import sqlite3
+from criptografia_votos import descriptografia, chave
 
 def desencriptografar_votos():
     votos_contados = {}
-
-    try:
-        with open('criptografia_votos.txt', 'r', encoding='utf-8') as armazenamento_votos:
-            votos_criptografados = armazenamento_votos.readlines()
-    except FileNotFoundError:
-        return votos_contados, 0, []
-
+    conn = sqlite3.connect('votos.db')
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT voto FROM votos')
+    votos_criptografados = cursor.fetchall()
+    
     for voto_criptografado in votos_criptografados:
-        voto = descriptografia(voto_criptografado.strip())
+        voto = descriptografia(voto_criptografado[0], chave)
         if voto in votos_contados:
             votos_contados[voto] += 1
         else:
             votos_contados[voto] = 1
-
-    total_votos = sum(votos_contados.values())
     
-    with open('relatorio_votacao.txt', 'w', encoding='utf-8') as relatorio:
-        relatorio.write("RELATÓRIO DE VOTAÇÃO - VOTAÇÃO DE CLUBES\n")
-        relatorio.write("APS - André - Alberto - Enzo\n")
-        relatorio.write("RANKING DE VOTOS\n\n")
-        
-        ranking = sorted(votos_contados.items(), key=lambda item: item[1], reverse=True)
-        for i, (time, votos) in enumerate(ranking, 1):
-            relatorio.write(f"{i}º - {time}: {votos} votos\n")
-        
-        relatorio.write("\nTOTAL DE VOTOS: {}\n".format(total_votos))
-
+    total_votos = sum(votos_contados.values())
+    ranking = sorted(votos_contados.items(), key=lambda item: item[1], reverse=True)
+    
+    conn.close()
     return votos_contados, total_votos, ranking
 
 if __name__ == '__main__':
