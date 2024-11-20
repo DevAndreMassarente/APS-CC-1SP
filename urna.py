@@ -1,4 +1,5 @@
 import os
+import base64
 import requests
 from criptografia_votos import criptografia, chave
 
@@ -10,6 +11,7 @@ FILE_PATH = 'criptografia_votos.txt'
 def votar(voto, user_ip):
     votos_criptografados = criptografia(voto, chave)
     content = f"{votos_criptografados}\n"
+    content_base64 = base64.b64encode(content.encode('utf-8')).decode('utf-8')
 
     headers = {
         'Authorization': f'token {GITHUB_TOKEN}',
@@ -26,7 +28,7 @@ def votar(voto, user_ip):
 
     data = {
         'message': 'Adicionar voto',
-        'content': content.encode('utf-8').decode('utf-8'),
+        'content': content_base64,
         'branch': 'main'
     }
     if sha:
