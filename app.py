@@ -1,14 +1,13 @@
 import sys
 import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-
-# Adicionar o diretório principal ao sys.path para garantir que os módulos possam ser importados corretamente
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
-from urna import votar as votar_urna
+from criptografia_votos import criptografia, chave
 from desencriptografia_votos import desencriptografar_votos
 from autocompletar import times_populares
 from cores_times import cores_times
+
+# Adicionar o diretório principal ao sys.path para garantir que os módulos possam ser importados corretamente
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 # Configurar os caminhos para templates e arquivos estáticos
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
@@ -16,6 +15,22 @@ static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.secret_key = os.urandom(24)
+
+usuario_votou = {}
+
+def votar(voto, user_ip):
+    global usuario_votou
+    if user_ip in usuario_votou:
+        return "Você já votou!"
+
+    votos_criptografados = criptografia(voto, chave)
+    file_name = 'criptografia_votos.txt'
+
+    with open(file_name, 'a', encoding='utf-8') as armazenamento_votos:
+        armazenamento_votos.write(votos_criptografados + '\n')
+
+    usuario_votou[user_ip] = True
+    return f"Voto registrado: {voto}"
 
 def get_user_ip():
     if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
@@ -43,7 +58,7 @@ def votar_route():
         mensagem = "Você já votou! Seu voto já foi enviado. Obrigado por participar!"
         return render_template('index.html', mensagem=mensagem, times=times_populares, votou=True)
 
-    mensagem = votar_urna(voto, user_ip)
+    mensagem = votar(voto, user_ip)
 
     session['usuario_votou'] = True
     session['mensagem'] = f"Voto registrado: {mensagem}. Obrigado por participar!"
@@ -58,7 +73,7 @@ def nao_tenho_time_route():
         mensagem = "Você já votou! Seu voto já foi enviado. Obrigado por participar!"
         return render_template('index.html', mensagem=mensagem, times=times_populares, votou=True)
 
-    mensagem = votar_urna("Sem time", user_ip)
+    mensagem = votar("Sem time", user_ip)
 
     session['usuario_votou'] = True
     session['mensagem'] = "Voto registrado: Sem time. Obrigado por participar!"

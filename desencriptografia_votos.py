@@ -1,3 +1,10 @@
+from criptografia_votos import chave
+
+def descriptografia(voto_criptografado, chave):
+    cripto = bytes.fromhex(voto_criptografado)
+    voto = ''.join(chr((char - chave) % 256) for char in cripto)
+    return voto
+
 def desencriptografar_votos():
     votos_contados = {}
 
