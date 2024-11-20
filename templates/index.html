@@ -9,6 +9,9 @@
 <body>
     <div class="container">
         <h1>⚽ Bem-vindo à Votação de Clubes 🏀</h1>
+        <div class="logo-container">
+            <img src="" alt="Logo do Clube" class="logo-clube">
+        </div>
         <form id="votacao-form" action="{{ url_for('votar_route') }}" method="post">
             <label for="voto">Escolha seu time:</label>
             <input type="text" id="voto" name="voto" autocomplete="off">
