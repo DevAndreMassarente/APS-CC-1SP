@@ -36,6 +36,7 @@ def votar(voto, user_ip):
 
     response = requests.put(url, json=data, headers=headers)
     if response.status_code == 201 or response.status_code == 200:
+        print(f"Voto registrado: {voto}")
         return f"Voto registrado: {voto}"
     else:
         print(f"Erro ao registrar voto no GitHub: {response.status_code} - {response.text}")
@@ -50,3 +51,4 @@ if __name__ == '__main__':
         else:
             user_ip = "127.0.0.1"
             print(votar(voto, user_ip))
+
