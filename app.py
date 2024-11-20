@@ -1,7 +1,7 @@
 import sys
 import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from criptografia_votos import criptografia, chave
+from urna import votar
 from desencriptografia_votos import desencriptografar_votos
 from autocompletar import times_populares
 from cores_times import cores_times
@@ -15,22 +15,6 @@ static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.secret_key = os.urandom(24)
-
-usuario_votou = {}
-
-def votar(voto, user_ip):
-    global usuario_votou
-    if user_ip in usuario_votou:
-        return "Você já votou!"
-
-    votos_criptografados = criptografia(voto, chave)
-    file_name = 'criptografia_votos.txt'
-
-    with open(file_name, 'a', encoding='utf-8') as armazenamento_votos:
-        armazenamento_votos.write(votos_criptografados + '\n')
-
-    usuario_votou[user_ip] = True
-    return f"Voto registrado: {voto}"
 
 def get_user_ip():
     if request.environ.get('HTTP_X_FORWARDED_FOR') is None:

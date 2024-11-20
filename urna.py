@@ -1,21 +1,42 @@
 import os
+import requests
 from criptografia_votos import criptografia, chave
 
-usuario_votou = {}
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+REPO_OWNER = 'seu-usuario'
+REPO_NAME = 'seu-repositorio'
+FILE_PATH = 'criptografia_votos.txt'
 
 def votar(voto, user_ip):
-    global usuario_votou
-    if user_ip in usuario_votou:
-        return "Você já votou!"
-
     votos_criptografados = criptografia(voto, chave)
-    file_name = 'criptografia_votos.txt'
+    content = f"{votos_criptografados}\n"
 
-    with open(file_name, 'a', encoding='utf-8') as armazenamento_votos:
-        armazenamento_votos.write(votos_criptografados + '\n')
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
 
-    usuario_votou[user_ip] = True
-    return f"Voto registrado: {voto}"
+    # Obter o SHA do arquivo existente
+    url = f'https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{FILE_PATH}'
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        sha = response.json()['sha']
+    else:
+        sha = None
+
+    data = {
+        'message': 'Adicionar voto',
+        'content': content.encode('utf-8').decode('utf-8'),
+        'branch': 'main'
+    }
+    if sha:
+        data['sha'] = sha
+
+    response = requests.put(url, json=data, headers=headers)
+    if response.status_code == 201 or response.status_code == 200:
+        return f"Voto registrado: {voto}"
+    else:
+        return "Erro ao registrar voto no GitHub"
 
 if __name__ == '__main__':
     while True:
