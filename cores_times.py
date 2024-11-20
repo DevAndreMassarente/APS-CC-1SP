@@ -46,7 +46,7 @@ cores_times = {
 
     # 50 clubes mais famosos do mundo
     "barcelona": ["#004D98", "#A50044"],  # Azul, Grená
-    "realmadrid": ["#FFFFFF"],  # Branco
+    "realmadrid": ["#FFFFFF", "#FFD700"],  # Branco, Amarelo
     "manchesterunited": ["#DA291C", "#000000"],  # Vermelho, Preto
     "liverpool": ["#C8102E", "#FFFFFF"],  # Vermelho
     "bayerndemunique": ["#DC052D", "#FFFFFF"],  # Vermelho, Branco
