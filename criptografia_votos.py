@@ -11,3 +11,8 @@ chave = hash(senha)
 def criptografia(voto, chave):
     cripto = [(ord(char) + chave) % 256 for char in voto]
     return ''.join(format(char, '02x') for char in cripto)
+
+def descriptografia(voto_criptografado, chave):
+    cripto = bytes.fromhex(voto_criptografado)
+    voto = ''.join(chr((char - chave) % 256) for char in cripto)
+    return voto
