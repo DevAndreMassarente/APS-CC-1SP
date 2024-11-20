@@ -1,20 +1,21 @@
-from criptografia_votos import hash, chave
+import sqlite3
 
-def descriptografia(voto_criptografado, chave=chave):
-    voto = [chr((int(voto_criptografado[i:i+2], 16) - chave) % 256) for i in range(0, len(voto_criptografado), 2)]
-    return ''.join(voto)
+DATABASE = 'votos.db'
+
+def get_db():
+    db = sqlite3.connect(DATABASE)
+    return db
 
 def desencriptografar_votos():
     votos_contados = {}
 
-    try:
-        with open('criptografia_votos.txt', 'r', encoding='utf-8') as armazenamento_votos:
-            votos_criptografados = armazenamento_votos.readlines()
-    except FileNotFoundError:
-        return votos_contados, 0, []
+    db = get_db()
+    cursor = db.execute('SELECT voto FROM votos')
+    votos = cursor.fetchall()
+    db.close()
 
-    for voto_criptografado in votos_criptografados:
-        voto = descriptografia(voto_criptografado.strip())
+    for voto in votos:
+        voto = voto[0]
         if voto in votos_contados:
             votos_contados[voto] += 1
         else:

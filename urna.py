@@ -1,4 +1,10 @@
-from criptografia_votos import criptografia, chave
+import sqlite3
+
+DATABASE = 'votos.db'
+
+def get_db():
+    db = sqlite3.connect(DATABASE)
+    return db
 
 usuario_votou = {}
 
@@ -6,12 +12,12 @@ def votar(voto, user_ip):
     global usuario_votou
     if user_ip in usuario_votou:
         return "Você já votou!"
-    
-    votos_criptografados = criptografia(voto, chave)
-    
-    with open('criptografia_votos.txt', 'a', encoding='utf-8') as armazenamento_votos:
-        armazenamento_votos.write(votos_criptografados + '\n')
-    
+
+    db = get_db()
+    db.execute('INSERT INTO votos (voto, user_ip) VALUES (?, ?)', (voto, user_ip))
+    db.commit()
+    db.close()
+
     usuario_votou[user_ip] = True
     return f"Voto registrado: {voto}"
 
