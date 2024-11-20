@@ -55,8 +55,8 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.body.style.setProperty('--cor-esquerda', data.cores[0]);
-                document.body.style.setProperty('--cor-direita', data.cores[1]);
+                document.body.style.setProperty('--cor-esquerda', data.cores[0] || 'transparent');
+                document.body.style.setProperty('--cor-direita', data.cores[1] || 'transparent');
             });
         }
 
