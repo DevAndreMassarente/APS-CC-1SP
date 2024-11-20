@@ -1,5 +1,6 @@
 import sys
 import os
+import unicodedata
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from urna import votar
 from desencriptografia_votos import desencriptografar_votos
@@ -22,6 +23,9 @@ def get_user_ip():
     else:
         return request.environ['HTTP_X_FORWARDED_FOR']
 
+def normalizar_nome(nome):
+    return unicodedata.normalize('NFKD', nome).encode('ASCII', 'ignore').decode('ASCII').replace(' ', '').lower()
+
 @app.route('/')
 def index():
     votou = session.get('usuario_votou', False)
@@ -42,7 +46,7 @@ def votar_route():
         mensagem = "Você já votou! Seu voto já foi enviado. Obrigado por participar!"
         return render_template('index.html', mensagem=mensagem, times=times_populares, votou=True)
 
-    mensagem = votar(voto, user_ip)
+    mensagem = votar(normalizar_nome(voto), user_ip)
 
     session['usuario_votou'] = True
     session['mensagem'] = f"Voto registrado: {mensagem}. Obrigado por participar!"
@@ -74,7 +78,7 @@ def autocomplete():
 def get_cores_time():
     data = request.get_json()
     time = data.get('time')
-    cores = cores_times.get(time, ['transparent', 'transparent'])
+    cores = cores_times.get(normalizar_nome(time), ['transparent', 'transparent'])
     return jsonify({'cores': cores})
 
 @app.route('/agradecimento')

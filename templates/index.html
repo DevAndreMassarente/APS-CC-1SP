@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,30 +9,57 @@
 <body>
     <div class="container">
         <h1>⚽ Bem-vindo à Votação de Clubes 🏀</h1>
-        
-        <div class="logo-container">
-            <img id="logo-clube" class="logo-clube" src="" alt="Logo do Clube" style="display: none;">
-        </div>
-        
-        <form id="voto-form" action="{{ url_for('votar_route') }}" method="POST">
+        <form id="votacao-form" action="{{ url_for('votar_route') }}" method="post">
             <label for="voto">Escolha seu time:</label>
             <input type="text" id="voto" name="voto" autocomplete="off">
-            <ul id="sugestoes-voto" class="sugestoes"></ul>
-            <button type="button" id="votar-btn" class="btn-primario">Votar</button>
-        </form>
-        
-        <form id="nao-tenho-time-form" action="{{ url_for('nao_tenho_time_route') }}" method="POST">
-            <button type="button" id="nao-tenho-time-btn" class="btn-secundario">Não tenho um time</button>
-        </form>
-        
-        <div id="confirmacao-modal" class="modal">
-            <div class="modal-content">
-                <p id="confirmacao-mensagem"></p>
-                <button id="confirmar-voto-btn" class="btn-primario">Confirmar Voto</button>
-                <button id="cancelar-btn" class="btn-secundario">Cancelar</button>
+            <ul id="sugestoes" class="sugestoes"></ul>
+            <div class="botoes">
+                <button type="submit" class="btn-primario">Votar</button>
+                <button type="button" class="btn-secundario" onclick="naoTenhoTime()">Não tenho um time</button>
             </div>
-        </div>
+        </form>
     </div>
-    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+    <script>
+        document.getElementById('voto').addEventListener('input', function() {
+            const query = this.value;
+            fetch(`/autocomplete?query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const sugestoes = document.getElementById('sugestoes');
+                    sugestoes.innerHTML = '';
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        li.addEventListener('click', function() {
+                            document.getElementById('voto').value = item;
+                            sugestoes.innerHTML = '';
+                            atualizarCores(item);
+                        });
+                        sugestoes.appendChild(li);
+                    });
+                });
+        });
+
+        function atualizarCores(time) {
+            fetch('/get_cores_time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ time: time })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.body.style.setProperty('--cor-esquerda', data.cores[0]);
+                document.body.style.setProperty('--cor-direita', data.cores[1]);
+            });
+        }
+
+        function naoTenhoTime() {
+            document.getElementById('votacao-form').action = "{{ url_for('nao_tenho_time_route') }}";
+            document.getElementById('votacao-form').submit();
+        }
+    </script>
 </body>
 </html>
