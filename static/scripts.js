@@ -47,6 +47,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log(`Logo do clube ${time} não encontrada.`);
                     resetarCoresLaterais();
                 }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar a logo:', error);
+                logoClube.style.display = 'none';
+                resetarCoresLaterais();
             });
     }
 
