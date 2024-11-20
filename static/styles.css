@@ -83,6 +83,7 @@ h1 {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease;
+    display: none; /* Inicialmente oculto */
 }
 
 .logo-container:hover {

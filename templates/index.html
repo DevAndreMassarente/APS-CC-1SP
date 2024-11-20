@@ -35,6 +35,7 @@
                             document.getElementById('voto').value = item;
                             sugestoes.innerHTML = '';
                             atualizarCores(item);
+                            atualizarLogo(item);
                         });
                         sugestoes.appendChild(li);
                     });
@@ -54,6 +55,14 @@
                 document.body.style.setProperty('--cor-esquerda', data.cores[0]);
                 document.body.style.setProperty('--cor-direita', data.cores[1]);
             });
+        }
+
+        function atualizarLogo(time) {
+            const logoContainer = document.querySelector('.logo-container');
+            const logoClube = document.querySelector('.logo-clube');
+            const nomeNormalizado = time.normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '').toLowerCase();
+            logoClube.src = `/static/logoclubes/${nomeNormalizado}.png`;
+            logoContainer.style.display = 'block';
         }
 
         function naoTenhoTime() {
