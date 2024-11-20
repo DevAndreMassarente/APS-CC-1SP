@@ -1,5 +1,4 @@
 import os
-from criptografia_votos import criptografia, chave
 
 usuario_votou = {}
 
