@@ -1,12 +1,12 @@
 from criptografia_votos import chave
 
-def descriptografia(voto_criptografado, chave):
-    cripto = bytes.fromhex(voto_criptografado)
-    voto = ''.join(chr((char - chave) % 256) for char in cripto)
-    return voto
-
 def desencriptografar_votos():
     votos_contados = {}
+
+    def descriptografia(voto_criptografado, chave):
+        cripto = bytes.fromhex(voto_criptografado)
+        voto = ''.join(chr((char - chave) % 256) for char in cripto)
+        return voto
 
     try:
         with open('criptografia_votos.txt', 'r', encoding='utf-8') as armazenamento_votos:
@@ -22,17 +22,8 @@ def desencriptografar_votos():
             votos_contados[voto] = 1
 
     total_votos = sum(votos_contados.values())
-    
-    with open('relatorio_votacao.txt', 'w', encoding='utf-8') as relatorio:
-        relatorio.write("RELATÓRIO DE VOTAÇÃO - VOTAÇÃO DE CLUBES\n")
-        relatorio.write("APS - André - Alberto - Enzo\n")
-        relatorio.write("RANKING DE VOTOS\n\n")
-        
-        ranking = sorted(votos_contados.items(), key=lambda item: item[1], reverse=True)
-        for i, (time, votos) in enumerate(ranking, 1):
-            relatorio.write(f"{i}º - {time}: {votos} votos\n")
-        
-        relatorio.write("\nTOTAL DE VOTOS: {}\n".format(total_votos))
+
+    ranking = sorted(votos_contados.items(), key=lambda item: item[1], reverse=True)
 
     return votos_contados, total_votos, ranking
 
