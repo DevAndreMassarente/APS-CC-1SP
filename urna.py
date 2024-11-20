@@ -38,6 +38,7 @@ def votar(voto, user_ip):
     if response.status_code == 201 or response.status_code == 200:
         return f"Voto registrado: {voto}"
     else:
+        print(f"Erro ao registrar voto no GitHub: {response.status_code} - {response.text}")
         return "Erro ao registrar voto no GitHub"
 
 if __name__ == '__main__':
